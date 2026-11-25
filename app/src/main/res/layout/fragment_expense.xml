@@ -33,7 +33,7 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Keterangan pemasukan"
+        android:hint="Keterangan pengeluaran"
         android:id="@+id/etNamaExpense"
         android:layout_marginBottom="10dp"
         android:inputType="text"/>
@@ -42,9 +42,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/etNominalExpense"
-        android:hint="Nominal pemasukan"
+        android:hint="Nominal pengeluaran"
         android:layout_marginBottom="10dp"
-        android:inputType="numberDecimal"/>
+        android:inputType="number"/>
 
     <EditText
         android:layout_width="match_parent"
