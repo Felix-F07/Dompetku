@@ -67,5 +67,4 @@
         android:text="Daftar Income"
         android:textStyle="bold"
         android:textSize="18sp"/>
-
 </LinearLayout>
