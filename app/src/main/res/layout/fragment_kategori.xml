@@ -39,20 +39,22 @@
 
     </RadioGroup>
     <EditText
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/etNamaKategori"
+        android:inputType="text"
         android:hint="Masukkan nama kategori"/>
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/btnSimpanKategori"
         android:text="Simpan"/>
-    
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/tvDaftarKategori"
-        android:text="Daftar Kategori"/>
+        android:text="Daftar Kategori"
+        android:layout_marginTop="16dp"/>
 
 </LinearLayout>
