@@ -1,10 +1,12 @@
 package com.dompetku
 
 import android.os.Bundle
+import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.Fragment
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -17,5 +19,33 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
+        val _btnKategori=findViewById<Button>(R.id.btnKategori)
+        val _btnIncome=findViewById<Button>(R.id.btnIncome)
+        val _btnExpense=findViewById<Button>(R.id.btnExpense)
+
+        if (savedInstanceState == null) {
+            replaceFragment(KategoriFragment())
+        }
+
+        _btnKategori.setOnClickListener {
+            replaceFragment(KategoriFragment())
+        }
+
+        _btnIncome.setOnClickListener {
+            replaceFragment(IncomeFragment())
+        }
+
+        _btnExpense.setOnClickListener {
+            replaceFragment(ExpenseFragment())
+        }
+    }
+
+    private fun replaceFragment(fragment: Fragment){
+        val fragmentManager = supportFragmentManager
+        val fragmentTransaction = fragmentManager.beginTransaction()
+
+        fragmentTransaction.replace(R.id.fragment_container, fragment)
+
+        fragmentTransaction.commit()
     }
 }
