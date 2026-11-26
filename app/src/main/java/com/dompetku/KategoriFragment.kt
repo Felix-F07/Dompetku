@@ -22,6 +22,7 @@ class KategoriFragment : Fragment() {
 
     private val _arKategori = ArrayList<dcKategori>()
     private var idKategori = 1
+    private var posisiEdit = -1
     private lateinit var _rvKategori: RecyclerView
     private lateinit var _adapterKategori: adapterKategori
 
@@ -57,8 +58,40 @@ class KategoriFragment : Fragment() {
         val _rgJenis = view.findViewById<RadioGroup>(R.id.rgJenis)
         val _etNamaKategori = view.findViewById<EditText>(R.id.etNamaKategori)
         val _btnSimpanKategori = view.findViewById<Button>(R.id.btnSimpanKategori)
+
         _rvKategori = view.findViewById<RecyclerView>(R.id.rvKategori)
         tampilkanData()
+        _adapterKategori.setOnItemClickCallback(
+            object : adapterKategori.OnItemClickCallback {
+
+                override fun editData(position: Int) {
+                    posisiEdit = position
+                    val kategori = _arKategori[position]
+                    _etNamaKategori.setText(kategori.nama)
+                    if (kategori.jenis == "Income") {
+                        _rgJenis.check(R.id.rbIncome)
+                    } else {
+                        _rgJenis.check(R.id.rbExpense)
+                    }
+                    _btnSimpanKategori.text = "Update"
+                }
+
+                override fun delData(position: Int) {
+                    _arKategori.removeAt(position)
+                    _adapterKategori.notifyDataSetChanged()
+                    posisiEdit = -1
+                    _etNamaKategori.text.clear()
+                    _rgJenis.clearCheck()
+                    _btnSimpanKategori.text = "Simpan"
+
+                    Toast.makeText(
+                        requireContext(),
+                        "Kategori berhasil dihapus",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        )
 
         _btnSimpanKategori.setOnClickListener {
             val nama = _etNamaKategori.text.toString().trim()
@@ -68,15 +101,21 @@ class KategoriFragment : Fragment() {
                 val radioButton = view.findViewById<RadioButton>(jenisDipilih)
                 val jenis = radioButton.text.toString()
 
-                val kategori = dcKategori(
-                    idKategori,
-                    nama,
-                    jenis
-                )
+                if (posisiEdit == -1) {
+                    val kategori = dcKategori(
+                        idKategori,
+                        nama,
+                        jenis
+                    )
 
-                _arKategori.add(kategori)
+                    _arKategori.add(kategori)
 
-                idKategori++
+                    idKategori++
+
+                } else {
+                    _arKategori[posisiEdit].nama = nama
+                    _arKategori[posisiEdit].jenis = jenis
+                }
 
                 _adapterKategori.notifyDataSetChanged()
 
@@ -85,9 +124,11 @@ class KategoriFragment : Fragment() {
                     "Kategori berhasil ditambahkan",
                     Toast.LENGTH_SHORT
                 ).show()
-
                 _etNamaKategori.text.clear()
                 _rgJenis.clearCheck()
+
+                posisiEdit = -1
+                _btnSimpanKategori.text = "Simpan"
             }else{
                 Toast.makeText(
                     requireContext(),

@@ -29,6 +29,21 @@ class adapterKategori(
 
         holder.binding.tvNamaKategori.text = kategori.nama
         holder.binding.tvJenisKategori.text = kategori.jenis
+
+        holder.binding.btnEditKategori.setOnClickListener {
+            val posisi = holder.bindingAdapterPosition
+            if (posisi != RecyclerView.NO_POSITION) {
+                onItemClickCallback.editData(posisi)
+            }
+        }
+
+        holder.binding.btnHapusKategori.setOnClickListener {
+            val posisi = holder.bindingAdapterPosition
+
+            if (posisi != RecyclerView.NO_POSITION) {
+                onItemClickCallback.delData(posisi)
+            }
+        }
     }
 
     override fun getItemCount(): Int {
@@ -38,4 +53,16 @@ class adapterKategori(
     inner class ListViewHolder(
         val binding: ItemKategoriBinding
     ) : RecyclerView.ViewHolder(binding.root)
+
+    private lateinit var onItemClickCallback: OnItemClickCallback
+    interface OnItemClickCallback {
+        fun editData(position: Int)
+        fun delData(position: Int)
+    }
+
+    fun setOnItemClickCallback(
+        onItemClickCallback: OnItemClickCallback
+    ) {
+        this.onItemClickCallback = onItemClickCallback
+    }
 }
