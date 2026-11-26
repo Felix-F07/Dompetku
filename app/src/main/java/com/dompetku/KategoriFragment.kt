@@ -10,6 +10,8 @@ import android.widget.EditText
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -20,6 +22,8 @@ class KategoriFragment : Fragment() {
 
     private val _arKategori = ArrayList<dcKategori>()
     private var idKategori = 1
+    private lateinit var _rvKategori: RecyclerView
+    private lateinit var _adapterKategori: adapterKategori
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,6 +57,8 @@ class KategoriFragment : Fragment() {
         val _rgJenis = view.findViewById<RadioGroup>(R.id.rgJenis)
         val _etNamaKategori = view.findViewById<EditText>(R.id.etNamaKategori)
         val _btnSimpanKategori = view.findViewById<Button>(R.id.btnSimpanKategori)
+        _rvKategori = view.findViewById<RecyclerView>(R.id.rvKategori)
+        tampilkanData()
 
         _btnSimpanKategori.setOnClickListener {
             val nama = _etNamaKategori.text.toString().trim()
@@ -72,6 +78,8 @@ class KategoriFragment : Fragment() {
 
                 idKategori++
 
+                _adapterKategori.notifyDataSetChanged()
+
                 Toast.makeText(
                     requireContext(),
                     "Kategori berhasil ditambahkan",
@@ -89,5 +97,13 @@ class KategoriFragment : Fragment() {
             }
         }
 
+    }
+    private fun tampilkanData() {
+
+        _rvKategori.layoutManager = LinearLayoutManager(requireContext())
+
+        _adapterKategori = adapterKategori(_arKategori)
+
+        _rvKategori.adapter = _adapterKategori
     }
 }
