@@ -5,21 +5,21 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
+import android.widget.RadioButton
+import android.widget.RadioGroup
+import android.widget.Toast
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [KategoriFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class KategoriFragment : Fragment() {
-    // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+
+    private val _arKategori = ArrayList<dcKategori>()
+    private var idKategori = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,20 +33,10 @@ class KategoriFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_kategori, container, false)
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment KategoriFragment.
-         */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             KategoriFragment().apply {
@@ -55,5 +45,49 @@ class KategoriFragment : Fragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val _rgJenis = view.findViewById<RadioGroup>(R.id.rgJenis)
+        val _etNamaKategori = view.findViewById<EditText>(R.id.etNamaKategori)
+        val _btnSimpanKategori = view.findViewById<Button>(R.id.btnSimpanKategori)
+
+        _btnSimpanKategori.setOnClickListener {
+            val nama = _etNamaKategori.text.toString().trim()
+            val jenisDipilih = _rgJenis.checkedRadioButtonId
+
+            if (nama.isNotEmpty() && jenisDipilih != -1) {
+                val radioButton = view.findViewById<RadioButton>(jenisDipilih)
+                val jenis = radioButton.text.toString()
+
+                val kategori = dcKategori(
+                    idKategori,
+                    nama,
+                    jenis
+                )
+
+                _arKategori.add(kategori)
+
+                idKategori++
+
+                Toast.makeText(
+                    requireContext(),
+                    "Kategori berhasil ditambahkan",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                _etNamaKategori.text.clear()
+                _rgJenis.clearCheck()
+            }else{
+                Toast.makeText(
+                    requireContext(),
+                    "Lengkapi data kategori",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+
     }
 }
