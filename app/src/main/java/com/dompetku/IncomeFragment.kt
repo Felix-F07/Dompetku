@@ -9,19 +9,24 @@ import android.view.ViewGroup
 import android.widget.Spinner
 import android.content.Context
 import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.EditText
+import android.widget.Toast
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
-private lateinit var sp: SharedPreferences
-private var _arKategori = ArrayList<dcKategori>()
-private val _arKategoriIncome = ArrayList<dcKategori>()
-private lateinit var _spKategoriIncome: Spinner
 
 class IncomeFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
+    private lateinit var sp: SharedPreferences
+    private var _arKategori = ArrayList<dcKategori>()
+    private val _arKategoriIncome = ArrayList<dcKategori>()
+    private lateinit var _spKategoriIncome: Spinner
+    private val _arIncome = ArrayList<dcIncome>()
+    private var idIncome = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,6 +67,48 @@ class IncomeFragment : Fragment() {
         )
         ambilKategori()
         tampilkanSpinner()
+
+        val _etNamaIncome = view.findViewById<EditText>(R.id.etNamaIncome)
+        val _etNominalIncome = view.findViewById<EditText>(R.id.etNominalIncome)
+        val _etTanggalIncome = view.findViewById<EditText>(R.id.etTanggalIncome)
+        val _btnSimpanIncome = view.findViewById<Button>(R.id.btnSimpanIncome)
+
+        _btnSimpanIncome.setOnClickListener {
+            val keterangan =_etNamaIncome.text.toString().trim()
+            val nominal =_etNominalIncome.text.toString().toLongOrNull()
+            val tanggal =_etTanggalIncome.text.toString().trim()
+            val posisiKategori =_spKategoriIncome.selectedItemPosition
+
+            if (keterangan.isNotEmpty() && nominal != null && nominal > 0 && tanggal.isNotEmpty() && posisiKategori in _arKategoriIncome.indices) {
+                val kategoriId = _arKategoriIncome[posisiKategori].id
+                val income = dcIncome(
+                    idIncome,
+                    kategoriId,
+                    keterangan,
+                    nominal,
+                    tanggal
+                )
+                _arIncome.add(income)
+                idIncome++
+
+                Toast.makeText(
+                    requireContext(),
+                    "Income berhasil ditambahkan",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                _etNamaIncome.text.clear()
+                _etNominalIncome.text.clear()
+                _etTanggalIncome.text.clear()
+
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    "Lengkapi data pemasukan dengan benar",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
     }
 
     private fun ambilKategori() {
