@@ -1,5 +1,7 @@
 package com.dompetku
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -10,8 +12,11 @@ import android.widget.EditText
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Toast
+import androidx.core.content.edit
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -20,11 +25,12 @@ class KategoriFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
-    private val _arKategori = ArrayList<dcKategori>()
+    private var _arKategori = ArrayList<dcKategori>()
     private var idKategori = 1
     private var posisiEdit = -1
     private lateinit var _rvKategori: RecyclerView
     private lateinit var _adapterKategori: adapterKategori
+    private lateinit var sp: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,6 +61,21 @@ class KategoriFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        sp = requireContext().getSharedPreferences(
+            "dataSP",
+            Context.MODE_PRIVATE
+        )
+
+        val gson = Gson()
+        val isiSP = sp.getString("spKategori", null)
+        val type = object : TypeToken<ArrayList<dcKategori>>() {}.type
+
+        if (isiSP != null) {
+            _arKategori=gson.fromJson(isiSP, type)
+        }
+
+        idKategori = sp.getInt("idKategori", 1)
+
         val _rgJenis = view.findViewById<RadioGroup>(R.id.rgJenis)
         val _etNamaKategori = view.findViewById<EditText>(R.id.etNamaKategori)
         val _btnSimpanKategori = view.findViewById<Button>(R.id.btnSimpanKategori)
@@ -78,6 +99,7 @@ class KategoriFragment : Fragment() {
 
                 override fun delData(position: Int) {
                     _arKategori.removeAt(position)
+                    simpanKeSP()
                     _adapterKategori.notifyDataSetChanged()
                     posisiEdit = -1
                     _etNamaKategori.text.clear()
@@ -117,6 +139,7 @@ class KategoriFragment : Fragment() {
                     _arKategori[posisiEdit].jenis = jenis
                 }
 
+                simpanKeSP()
                 _adapterKategori.notifyDataSetChanged()
 
                 Toast.makeText(
@@ -146,5 +169,15 @@ class KategoriFragment : Fragment() {
         _adapterKategori = adapterKategori(_arKategori)
 
         _rvKategori.adapter = _adapterKategori
+    }
+
+    private fun simpanKeSP() {
+        val gson = Gson()
+        val json = gson.toJson(_arKategori)
+
+        sp.edit {
+            putString("spKategori", json)
+            putInt("idKategori", idKategori)
+        }
     }
 }

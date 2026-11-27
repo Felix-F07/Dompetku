@@ -1,23 +1,25 @@
 package com.dompetku
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Spinner
+import android.content.Context
+import android.widget.ArrayAdapter
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
+private lateinit var sp: SharedPreferences
+private var _arKategori = ArrayList<dcKategori>()
+private val _arKategoriIncome = ArrayList<dcKategori>()
+private lateinit var _spKategoriIncome: Spinner
 
-/**
- * A simple [Fragment] subclass.
- * Use the [IncomeFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class IncomeFragment : Fragment() {
-    // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
 
@@ -38,15 +40,6 @@ class IncomeFragment : Fragment() {
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment IncomeFragment.
-         */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             IncomeFragment().apply {
@@ -55,5 +48,55 @@ class IncomeFragment : Fragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }
+    }
+
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?
+    ) {
+        super.onViewCreated(view, savedInstanceState)
+        _spKategoriIncome = view.findViewById<Spinner>(R.id.spKategoriIncome)
+        sp = requireContext().getSharedPreferences(
+            "dataSP",
+            Context.MODE_PRIVATE
+        )
+        ambilKategori()
+        tampilkanSpinner()
+    }
+
+    private fun ambilKategori() {
+        val gson = Gson()
+        val isiSP = sp.getString("spKategori", null)
+        val type = object : TypeToken<ArrayList<dcKategori>>() {}.type
+
+        if (isiSP != null) {
+            _arKategori = gson.fromJson(isiSP, type)
+        }
+
+        _arKategoriIncome.clear()
+        for (kategori in _arKategori) {
+            if (kategori.jenis == "Income") {
+                _arKategoriIncome.add(kategori)
+            }
+        }
+    }
+
+    private fun tampilkanSpinner() {
+        val namaKategori = ArrayList<String>()
+
+        for (kategori in _arKategoriIncome) {
+            namaKategori.add(kategori.nama)
+        }
+
+        val adapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_spinner_item,
+            namaKategori
+        )
+
+        adapter.setDropDownViewResource(
+            android.R.layout.simple_spinner_dropdown_item
+        )
+        _spKategoriIncome.adapter = adapter
     }
 }
